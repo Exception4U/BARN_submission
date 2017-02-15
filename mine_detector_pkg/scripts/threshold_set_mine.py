@@ -20,8 +20,9 @@ from std_msgs.msg import Bool
 from tf.transformations import euler_from_quaternion, quaternion_from_euler
 from geometry_msgs.msg import Twist, Pose, PoseStamped, PoseWithCovariance, PoseWithCovarianceStamped
 
-
-
+global transListene
+global mine_detect_message
+global mine_detected
 #Mine detection var
 mine_detection_threshold_left_val = rospy.get_param("/left_coil_threshold", 0.75)
 #mine_detection_threshold_middle_val = rospy.get_param("/middle_coil_threshold",-75000)
@@ -195,7 +196,7 @@ def right_threshold_data_bkup(alarm_value):
 ##########################################################################################33
 
 def Mine_Position_Diff(current_pose,prev_pose):
-
+        global mine_detected
 	global mine_distance_threshold_x
 	global mine_distance_threshold_y
 
@@ -214,6 +215,7 @@ def Mine_Position_Diff(current_pose,prev_pose):
 
 		if(abs(temp_diff_x) > abs(mine_distance_threshold_x) or abs(temp_diff_y) > abs(mine_distance_threshold_y)):
 			rospy.set_param("/new_mine",True)
+
 #			rospy.loginfo("New mine detected")
 
 		if(abs(temp_diff_x) < abs(mine_distance_threshold_x) or abs(temp_diff_y) < abs(mine_distance_threshold_y)):

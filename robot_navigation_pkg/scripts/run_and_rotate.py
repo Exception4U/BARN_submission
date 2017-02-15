@@ -256,7 +256,7 @@ def Test_run():
 
 	global publish_vel
 
-	publish_vel = rospy.Publisher('/p3at/cmd_vel', Twist)
+	publish_vel = rospy.Publisher('/p3at/cmd_vel', Twist,queue_size=1)
 
 	#Subscriber for receving Twist message from main algorithm node
 	rospy.Subscriber("/main_cmd_velocity", Twist, Do_run_rotate)

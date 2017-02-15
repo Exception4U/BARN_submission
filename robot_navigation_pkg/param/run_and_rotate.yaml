@@ -1,5 +1,5 @@
 step_distance: 0.01
-max_robot_velocity: 0.22
+max_robot_velocity: 0.2
 step_angle: 0.2
 max_step_size: 50
 

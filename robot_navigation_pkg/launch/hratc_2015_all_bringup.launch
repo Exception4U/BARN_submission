@@ -7,7 +7,7 @@
   <include file="$(find robot_navigation_pkg)/launch/hratc_2015_bringup.launch"/>
 
 
-  <include file="$(find hratc2016_framework)/launch/run_simulation_world.launch"/>
+  <include file="$(find hratc2017_framework)/launch/run_simulation_world.launch"/>
 
 
 

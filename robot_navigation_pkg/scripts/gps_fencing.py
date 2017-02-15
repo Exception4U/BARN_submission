@@ -43,10 +43,10 @@ except:
 
 try:
 
-	left_side_plot_gps_thresh =(0,-5)#(rospy.get_param("/left_side_gps_threshold_lat",0.0),rospy.get_param("/left_side_gps_threshold_long",-4.0))
-	bottom_side_plot_gps_thresh =(-5,0)#(rospy.get_param("/bottom_side_gps_threshold_lat",-4.0),rospy.get_param("/bottom_side_gps_threshold_long",0.0))
-	right_side_plot_gps_thresh =(0,5)#(rospy.get_param("/right_side_gps_threshold_lat",0.0),rospy.get_param("/right_side_gps_threshold_long",4.0))
-	top_side_plot_gps_thresh =(5,0)#(rospy.get_param("/top_side_gps_threshold_lat",4.0),rospy.get_param("/top_side_gps_threshold_long",0.0))
+	left_side_plot_gps_thresh =(0,-4)#(rospy.get_param("/left_side_gps_threshold_lat",0.0),rospy.get_param("/left_side_gps_threshold_long",-4.0))
+	bottom_side_plot_gps_thresh =(-4,0)#(rospy.get_param("/bottom_side_gps_threshold_lat",-4.0),rospy.get_param("/bottom_side_gps_threshold_long",0.0))
+	right_side_plot_gps_thresh =(0,4)#(rospy.get_param("/right_side_gps_threshold_lat",0.0),rospy.get_param("/right_side_gps_threshold_long",4.0))
+	top_side_plot_gps_thresh =(4,0)#(rospy.get_param("/top_side_gps_threshold_lat",4.0),rospy.get_param("/top_side_gps_threshold_long",0.0))
 
 except:
 	rospy.logwarn("Unable to load GPS threshold values for each side")

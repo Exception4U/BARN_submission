@@ -850,13 +850,13 @@ def Init_Move():
 
 
 #	move_robot(0.2)
-#	move_robot(0.2)
+#   move_robot(0.2)
 
 #	rospy.loginfo("Completed step, now rotation")
 
 
-#	rotate_robot(70)
-#	rospy.loginfo("Completed rotation")
+#	rotate_robot(-90)
+	rospy.loginfo("Completed rotation")
 
 
 	#Move robot around mine area

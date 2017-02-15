@@ -17,6 +17,7 @@ _tiny = sys.float_info.min
 global gps_value_multi_factor
 gps_value_multi_factor = 1
 
+gps_value_multi_factor1 = 1000000
 
 
 global gps_corner_1_lat
@@ -33,22 +34,22 @@ global gps_corner_4_long
 
 
 try:
-	gps_corner_1_lat = rospy.get_param("/minefield_static_tf_publisher/minefield/corner1/latitude",-30.060314832074897851 ) * gps_value_multi_factor
-	gps_corner_1_long = rospy.get_param("/minefield_static_tf_publisher/minefield/corner1/longitude",-51.173918920793525444 ) * gps_value_multi_factor
+	gps_corner_1_lat = rospy.get_param("/minefield_static_tf_publisher/minefield/corner1/latitude",-30.060314832074897851 ) * gps_value_multi_factor1
+	gps_corner_1_long = rospy.get_param("/minefield_static_tf_publisher/minefield/corner1/longitude",-51.173918920793525444 ) * gps_value_multi_factor1
 
 
-	gps_corner_2_lat = rospy.get_param("/minefield_static_tf_publisher/minefield/corner2/latitude",-30.060314969251294315) * gps_value_multi_factor
+	gps_corner_2_lat = rospy.get_param("/minefield_static_tf_publisher/minefield/corner2/latitude",-30.060314969251294315) * gps_value_multi_factor1
 
-	gps_corner_2_long = rospy.get_param("/minefield_static_tf_publisher/minefield/corner2/longitude",-51.173815175327305838) * gps_value_multi_factor
-
-
-
-	gps_corner_3_lat = rospy.get_param("/minefield_static_tf_publisher/minefield/corner3/latitude",-30.060224724386614525) * gps_value_multi_factor
-	gps_corner_3_long = rospy.get_param("/minefield_static_tf_publisher/minefield/corner3/longitude", -51.173815017676766104)* gps_value_multi_factor
+	gps_corner_2_long = rospy.get_param("/minefield_static_tf_publisher/minefield/corner2/longitude",-51.173815175327305838) * gps_value_multi_factor1
 
 
-	gps_corner_4_lat = rospy.get_param("/minefield_static_tf_publisher/minefield/corner4/latitude",-30.060224587210715441 ) * gps_value_multi_factor
-	gps_corner_4_long = rospy.get_param("/minefield_static_tf_publisher/minefield/corner4/longitude",-51.173918763048902747 ) * gps_value_multi_factor
+
+	gps_corner_3_lat = rospy.get_param("/minefield_static_tf_publisher/minefield/corner3/latitude",-30.060224724386614525) * gps_value_multi_factor1
+	gps_corner_3_long = rospy.get_param("/minefield_static_tf_publisher/minefield/corner3/longitude", -51.173815017676766104)* gps_value_multi_factor1
+
+
+	gps_corner_4_lat = rospy.get_param("/minefield_static_tf_publisher/minefield/corner4/latitude",-30.060224587210715441 ) * gps_value_multi_factor1
+	gps_corner_4_long = rospy.get_param("/minefield_static_tf_publisher/minefield/corner4/longitude",-51.173918763048902747 ) * gps_value_multi_factor1
 
 	rospy.loginfo("Retrieved GPS Limts")
 
@@ -101,7 +102,7 @@ def receive_gps_data(gps_msg):
 	global robot_gps_data
 	global robot_in_out
 
-	robot_gps_data = (gps_msg.latitude * gps_value_multi_factor,gps_msg.longitude * gps_value_multi_factor)
+	robot_gps_data = (gps_msg.latitude * gps_value_multi_factor1,gps_msg.longitude * gps_value_multi_factor1)
 
 
     	testpoints = (Pt(x=robot_gps_data[0], y=robot_gps_data[1]), Pt(x=5, y=8),

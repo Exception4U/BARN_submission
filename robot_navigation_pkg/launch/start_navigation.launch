@@ -26,7 +26,7 @@
 
 
 
-  <node name="auto_navigation" pkg="robot_navigation_pkg" type="auto_navigation.py" output="screen"/>  
+  <node name="auto_navigation" pkg="robot_navigation_pkg" type="auto_navigation_bkup.py" output="screen"/>  
 
 </launch>
 
