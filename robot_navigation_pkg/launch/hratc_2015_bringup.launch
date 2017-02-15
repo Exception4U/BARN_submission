@@ -1,0 +1,18 @@
+<launch>
+
+  <!-- Including Mine detection launch file first -->
+
+
+
+
+
+  <include file="$(find mine_detector_pkg)/launch/start_mine_detection.launch"/>
+
+
+  <include file="$(find robot_navigation_pkg)/launch/start_navigation.launch"/>
+
+
+  <include file="$(find robot_navigation_pkg)/launch/pointcloud_generator.launch"/>
+
+</launch>
+

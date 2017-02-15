@@ -1,0 +1,6 @@
+left_coil_threshold: -70000
+middle_coil_threshold: -70000
+right_coil_threshold: -70000
+left_coil_peak: -170000
+middle_coil_peak: -150000
+right_coil_peak: -300000

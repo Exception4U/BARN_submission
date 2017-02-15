@@ -1,0 +1,253 @@
+						HRATC 2015 Simulation Code README
+#######################################################################################################################
+
+Team Members: 
+###################
+
+Name			Mail
+======================================================================================================================= 
+
+1)tushar vaidya   : tushar5610@gmail.com
+2)Ankur Mali : 	 ankurMali07@gmail.com
+3)Mohini Pande : m.mohinipande@gmail.com
+
+=======================================================================================================================
+#######################################################################################################################
+
+Code Development Platform
+===========================
+
+1) Ubuntu 12.04.4 64 bit
+2) ROS Hydro
+
+
+#######################################################################################################################
+Prerequisites
+===============
+
+1)Ubuntu 12.04.4
+2) Full Hydro desktop full installation
+3) HRATC 2016 Framework full installation
+
+#######################################################################################################################
+
+Main ROS packages included 
+===========================
+
+1) mine_detector_pkg : This package contain nodes for detecting mine and setting its position. The following
+		       nodes are included in the "script" folder of this package
+
+	Files Included
+	==============
+
+	Nodes:
+	=======
+	a)read_mine_detector.py : This node will read the three metal detector coils and create an alaram value for each coil and publish into three seperate topics
+
+	b)smooth_mine_detector_reading.py : This node subscribe the alarm values from the above node and smoothen using a averaging filter and  publish the smoothened values in three 		seperate topics
+
+	c)threshold_set_mine.py : This node will subscribe smoothened alarm values of metal detector, do some processing and threshold 
+	each coil values. Each threshold can be adjusted  using ROS parameter files inside param folder. When a threshold is set, the node
+	will take the position of middle coil with respect to mine field and publish and set the mine position to the hratc judge
+
+	d)sweep_arm.py : This node will rotate front arm in a fixed angle with a particular angular velocity
+
+	Parameter files
+	=================
+
+	a)smooth_mine_param.yaml : This ROS parameter file is using by smooth mine detector node, this file has parameters such as number of sample for the average filter for each coil
+
+	b)threshold_mine.yaml : This file contain the threshold values for each alarm value of each coils. It is used by the threshold node.
+
+	c)sweep_arm.yaml : This file is used by sweep arm node and this contain the arm lift value and step angle of each movement
+
+	Launch files
+	===============
+	a)start_mine_detection.launch : This launch file start entire nodes of mine_detector_pkg and it will start detecting mine. but robot will not move, only arm will sweep and it 		may detect mine. We can use teleop to test the mine detection feature by running this package. We can adjust the mine detection threshold and other parameters by changing param 	 files. 
+
+#################################################################################################################################
+
+
+
+
+2)robot_navigation_pkg : This package will taken care of robot movement, mine field limit check, move and rotate robot and the autonomous algorithm for moving robot in entire mine field
+
+	Files Included
+	==============
+
+	Nodes:
+	=====
+	a) run_and_rotate.py : This node taken care of moving robot in steps and rotating robot in specific angles. We can feed the values of translation and rotation via ROS topics
+
+	b)find_robot_rotation.py : This node subscribe robot ekf odom and extract the rotation in quternion, converting it into euler and take the "z" axis rotation
+
+	c)gps_fencing.py: This node takes minefield GPS corners values from ROS parameter and create a
+	virtual fence around the minefield to avoid collision on the sides
+
+	d)auto_navigation.py: This nodes implements autonomous algorithm of the mine detection
+
+	e) husky_teleop_key : This node executes when the husky teleop launch file starts. This can send command velocity to husky robot
+
+	Param:
+	======
+
+	a) auto_navigation.yaml : This ROS parameter file contain parameters for the auto navig.py node
+
+	b) gps_fencing.yaml : This ROS parameter file contain values of GPS threshold for side detection and avoidance
+
+	c) run_and_rotate.yaml: ROS parameter file contain values of speed and rotation factors
+
+
+	Launch files
+	============
+
+	a)start_navigation.launch : This launch file will start all nodes inside this package
+
+	b)hratc_2015_bringup.launch : This launch file will start both robot_navigation and mine_detector_pkg for starting the entire process
+
+	c) hratc_2015_all_bringup.launch : This will start HRATC 2015 simulation plus the entire nodes 
+
+	d) husky_teleop.launch : This launch file is for controlling husky using keyboard. It 
+	is used for testing purpose
+
+
+#################################################################################################################################
+#################################################################################################################################
+Installation Instruction
+=========================
+
+1) Create a new ROS workspace in home folder using following command. 
+
+	Switch to home folder, create a workspace folder with a name
+	$ mkdir <workspace_name>
+
+	Switching inside workspace folder
+	$ cd <workspace_name>
+
+	Creating a folder called src
+	$ mkdir src
+
+	Switching inside src folder
+	$ cd src
+
+	Initiating the following command inside src folder for starting a new catkin workspace
+	$ catkin_init_workspace
+
+	Switching into catkin workspace directory
+	$ cd ~/<workspace_name>
+
+	Build the packages, now the workspace is empty but it will not show any error
+	$ catkin_make
+
+	After catkin_make , copy the two package inside src folder, and build the packages using catkin_make inside the catkin_workspace folder 
+
+	Setting catkin workspace path inside .bashrc file using following command. This will find packages inside this workspace
+
+	Add the following line on bottom of .bashrc file 
+
+	source ~/<workspace_name>/devel/setup.bash
+
+	After adding this line take a new terminal and ensure you can access this package using "roscd" command
+
+
+	 $ roscd mine_detector_pkg
+	 $ roscd robot_navigation_pkg
+
+	After everything is set you can run the launch files to start the operations
+
+Running Instruction for simulation
+====================
+
+	1)To launch entire simulation of HRATC 2015 challenge and all other nodes use the following command
+
+	 $ roslaunch robot_navigation_pkg hratc_2015_all_bringup.launch
+
+	2)To launch entire nodes and running simulation in seperate terminal, use the following command
+	<New terminal>
+
+	Launching HRATC 2015 challenge simulation
+
+	 $ roslaunch hratc2015_framework run_simulation_world.launch
+
+	<New terminal>
+	Launching entire nodes of two packages
+
+	 $ roslaunch robot_navigation_pkg hratc_2015_bringup.launch
+
+	3) To launch robot navigation , mine detection and simulation in different terminal, use the following commands
+
+	Launching HRATC 2015 challenge simulation
+	<New terminal>
+
+	 $ roslaunch hratc2015_framework run_simulation_world.launch
+
+
+	Launching mine detection nodes only
+	<New terminal>
+
+	 $ roslaunch mine_detector_pkg start_mine_detection.launch
+
+
+	Launching robot navigation nodes only
+	<New terminal>
+
+	 $ roslaunch robot_navigation_pkg start_navigation.launch
+
+
+#################################################################################################################################
+#################################################################################################################################
+Running Instruction for hardware
+====================
+
+	Note : Point cloud launch file is customized and put in robot_navigation_pkg, if it fail to connect to action server, re-run the command 
+
+	1)To launch Husky hardware nodes, mine detection and navigation algorithm of HRATC 2015 challenge use the following command
+
+	 $ roslaunch robot_navigation_pkg hratc_2015_hardware_bringup.launch
+
+	2)To launch entire nodes and running hardware in seperate terminal, use the following command
+	<New terminal>
+
+	Launching HRATC 2015 challenge hardware
+
+	 $ roslaunch hratc2015_dataset husky.launch
+
+	<New terminal>
+	Launching entire nodes of two packages
+
+	 $ roslaunch robot_navigation_pkg hratc_2015_bringup.launch
+
+	3) To launch robot navigation , mine detection and hardware in different terminal, use the following commands
+
+	Launching HRATC 2015 challenge hardware
+	<New terminal>
+
+	 $ roslaunch hratc2015_dataset husky.launch
+
+
+	Launching mine detection nodes only
+	<New terminal>
+
+	 $ roslaunch mine_detector_pkg start_mine_detection.launch
+
+
+	Launching robot navigation nodes only
+	<New terminal>
+
+	 $ roslaunch robot_navigation_pkg start_navigation.launch
+
+
+
+
+
+#################################################################################################################################
+#################################################################################################################################
+
+   
+
+
+
+
+
+
+

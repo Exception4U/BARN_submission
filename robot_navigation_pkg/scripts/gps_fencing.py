@@ -1,0 +1,404 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+#
+#  gps_fencing.py
+#
+#  This node will simply recieving GPS value and check robot is within gps virtual fenceky robot
+
+
+
+import rospy,sys
+
+
+from std_msgs.msg import String
+from sensor_msgs.msg import NavSatFix
+
+global gps_value_multi_factor
+
+gps_value_multi_factor = 1000000
+#Retrieve GPS corner values
+try:
+	gps_corner_1_lat = rospy.get_param("/minefield_static_tf_publisher/minefield/corner1/latitude",-30.060314832074897851 ) * gps_value_multi_factor
+	gps_corner_1_long = rospy.get_param("/minefield_static_tf_publisher/minefield/corner1/longitude",-51.173918920793525444 ) * gps_value_multi_factor
+
+
+	gps_corner_2_lat = rospy.get_param("/minefield_static_tf_publisher/minefield/corner2/latitude",-30.060314969251294315) * gps_value_multi_factor
+
+	gps_corner_2_long = rospy.get_param("/minefield_static_tf_publisher/minefield/corner2/longitude",-51.173815175327305838) * gps_value_multi_factor
+
+
+
+	gps_corner_3_lat = rospy.get_param("/minefield_static_tf_publisher/minefield/corner3/latitude",-30.060224724386614525) * gps_value_multi_factor
+	gps_corner_3_long = rospy.get_param("/minefield_static_tf_publisher/minefield/corner3/longitude", -51.173815017676766104)* gps_value_multi_factor
+
+
+	gps_corner_4_lat = rospy.get_param("/minefield_static_tf_publisher/minefield/corner4/latitude",-30.060224587210715441 ) * gps_value_multi_factor
+	gps_corner_4_long = rospy.get_param("/minefield_static_tf_publisher/minefield/corner4/longitude",-51.173918763048902747 ) * gps_value_multi_factor
+
+	rospy.loginfo("Retrieved GPS Limts")
+
+except:
+	rospy.logwarn("Unable to retrieved the GPS Limits, you should run simulation before running this node")
+	sys.exit(0)
+
+try:
+
+	left_side_plot_gps_thresh =(0,-5)#(rospy.get_param("/left_side_gps_threshold_lat",0.0),rospy.get_param("/left_side_gps_threshold_long",-4.0))
+	bottom_side_plot_gps_thresh =(-5,0)#(rospy.get_param("/bottom_side_gps_threshold_lat",-4.0),rospy.get_param("/bottom_side_gps_threshold_long",0.0))
+	right_side_plot_gps_thresh =(0,5)#(rospy.get_param("/right_side_gps_threshold_lat",0.0),rospy.get_param("/right_side_gps_threshold_long",4.0))
+	top_side_plot_gps_thresh =(5,0)#(rospy.get_param("/top_side_gps_threshold_lat",4.0),rospy.get_param("/top_side_gps_threshold_long",0.0))
+
+except:
+	rospy.logwarn("Unable to load GPS threshold values for each side")
+	sys.exit(0)
+
+
+
+
+
+robot_gps_data = NavSatFix()
+
+
+
+def Do_Compare_Robot_Position(robot_gps_dat):
+
+    global left_limit_gps
+    global bottom_limit_gps
+    global right_limit_gps
+    global top_limit_gps
+
+
+
+    global left_robot_limit_diff
+    global bottom_robot_limit_diff
+    global right_robot_limit_diff
+    global top_robot_limit_diff
+
+
+	#Threshold limit
+    global left_side_plot_gps_thresh
+    global bottom_side_plot_gps_thresh
+    global right_side_plot_gps_thresh
+    global top_side_plot_gps_thresh
+
+	#Do publish as side letter
+    global reach_one_side_limt
+
+
+	#Difference in each lat,log threshold
+#	left_robot_limit_diff = (round(left_limit_gps[0] - robot_gps_dat[0],4), round(left_limit_gps[1] - robot_gps_dat[1],4))
+    left_robot_limit_diff = ((left_limit_gps[0] - robot_gps_dat[0]), (left_limit_gps[1] - robot_gps_dat[1]))
+    bottom_robot_limit_diff = ((bottom_limit_gps[0] - robot_gps_dat[0]),(bottom_limit_gps[1] - robot_gps_dat[1]))
+    right_robot_limit_diff = ((right_limit_gps[0] - robot_gps_dat[0]),(right_limit_gps[1] - robot_gps_dat[1]))
+    top_robot_limit_diff = ((top_limit_gps[0] - robot_gps_dat[0]),(top_limit_gps[1] - robot_gps_dat[1]))
+
+
+#	rospy.loginfo("Robot data=%d %d",robot_gps_dat[0],robot_gps_dat[1])
+#	rospy.loginfo("Differnce in left=%d %d",float(left_robot_limit_diff[0]),float(left_robot_limit_diff[1]))
+
+#	rospy.loginfo("LAT")
+#	rospy.loginfo(right_limit_gps[0])
+#	rospy.loginfo(robot_gps_dat[0])
+
+#	rospy.loginfo("LONG")
+
+#	rospy.loginfo(right_limit_gps[1])
+#	rospy.loginfo(robot_gps_dat[1])
+#	rospy.loginfo(right_robot_limit_diff)
+
+
+
+#	rospy.loginfo(bottom_robot_limit_diff)
+#	rospy.loginfo(right_robot_limit_diff)
+#	rospy.loginfo(top_robot_limit_diff)
+#	rospy.loginfo("###################")
+
+
+
+    #import pdb;pdb.set_trace()
+    if(left_robot_limit_diff[1] > left_side_plot_gps_thresh[1]):
+		rospy.logwarn("Robot will hit on left side")
+   		reach_one_side_limt.publish('l')
+    if(bottom_robot_limit_diff[0] > bottom_side_plot_gps_thresh[0]):
+		rospy.logwarn("Robot will hit on bottom side")
+        	reach_one_side_limt.publish('b')
+    if(right_robot_limit_diff[1] < right_side_plot_gps_thresh[1]):
+		rospy.logwarn("Robot will hit on right side")
+        	reach_one_side_limt.publish('r')
+    if(top_robot_limit_diff[0] < top_side_plot_gps_thresh[0]):
+		rospy.logwarn("Robot will hit on top side")
+        	reach_one_side_limt.publish('t')
+
+    #Publishes corner values
+    publish_gps_corner()
+
+
+
+def left_or_right(x1,y1,x2,y2,xp,yp):
+    A = -(y2 - y1)
+    B = x2 - x1
+    C = -(A * x1 + B * y1)
+    D = A * xp + B * yp + C
+    return "left" if D <0 else "right"
+
+def is_going_out(robot_gps_dat):
+    global left_limit_gps
+    global bottom_limit_gps
+    global right_limit_gps
+    global top_limit_gps
+
+
+
+    global left_robot_limit_diff
+    global bottom_robot_limit_diff
+    global right_robot_limit_diff
+    global top_robot_limit_diff
+
+
+	#Threshold limit
+    global left_side_plot_gps_thresh
+    global bottom_side_plot_gps_thresh
+    global right_side_plot_gps_thresh
+    global top_side_plot_gps_thresh
+
+	#Do publish as side letter
+    global reach_one_side_limt
+
+
+	#Difference in each lat,log threshold
+#	left_robot_limit_diff = (round(left_limit_gps[0] - robot_gps_dat[0],4), round(left_limit_gps[1] - robot_gps_dat[1],4))
+    left_robot_limit_diff = ((left_limit_gps[0] - robot_gps_dat[0]), (left_limit_gps[1] - robot_gps_dat[1]))
+    bottom_robot_limit_diff = ((bottom_limit_gps[0] - robot_gps_dat[0]),(bottom_limit_gps[1] - robot_gps_dat[1]))
+    right_robot_limit_diff = ((right_limit_gps[0] - robot_gps_dat[0]),(right_limit_gps[1] - robot_gps_dat[1]))
+    top_robot_limit_diff = ((top_limit_gps[0] - robot_gps_dat[0]),(top_limit_gps[1] - robot_gps_dat[1]))
+
+
+#	rospy.loginfo("Robot data=%d %d",robot_gps_dat[0],robot_gps_dat[1])
+#	rospy.loginfo("Differnce in left=%d %d",float(left_robot_limit_diff[0]),float(left_robot_limit_diff[1]))
+
+#	rospy.loginfo("LAT")
+#	rospy.loginfo(right_limit_gps[0])
+#	rospy.loginfo(robot_gps_dat[0])
+
+#	rospy.loginfo("LONG")
+
+#	rospy.loginfo(right_limit_gps[1])
+#	rospy.loginfo(robot_gps_dat[1])
+#	rospy.loginfo(right_robot_limit_diff)
+
+
+
+#	rospy.loginfo(bottom_robot_limit_diff)
+#	rospy.loginfo(right_robot_limit_diff)
+#	rospy.loginfo(top_robot_limit_diff)
+#	rospy.loginfo("###################")
+
+
+
+    #import pdb;pdb.set_trace()
+
+    global gps_corner_1_lat
+    global gps_corner_1_long
+
+    global gps_corner_2_lat
+    global gps_corner_2_long
+
+    global gps_corner_3_lat
+    global gps_corner_3_long
+
+    global gps_corner_4_lat
+    global gps_corner_4_long
+
+
+    x1,y1=(gps_corner_1_lat,gps_corner_1_long)
+    x2,y2=(gps_corner_2_lat,gps_corner_2_long)
+    x3,y3=(gps_corner_3_lat,gps_corner_3_long)
+    x4,y4=(gps_corner_4_lat,gps_corner_4_long)
+
+    xp,yp=(robot_gps_dat[0],robot_gps_dat[1])
+
+
+    #rospy.logwarn("tushar")
+
+    if left_or_right(x1,y1,x2,y2,xp,yp)=="left":
+        if left_or_right(x2,y2,x3,y3,xp,yp) == "left":
+            if left_or_right(x3,y3,x4,y4,xp,yp) =="left":
+                if left_or_right(x4,y4,x1,y1,xp,yp) == "left":
+                    rospy.logwarn("robot is inside grid")
+                else:
+                    rospy.logwarn("robot is going above")
+                    reach_one_side_limt.publish('t')
+
+            else:
+                rospy.logwarn("robot is going right")
+                reach_one_side_limt.publish('r')
+
+        else:
+            rospy.logwarn("robot is going below")
+            reach_one_side_limt.publish('b')
+
+    else:
+        rospy.logwarn("robot is going left")
+        reach_one_side_limt.publish('l')
+
+
+    #Publishes corner values
+    publish_gps_corner()
+
+#Take average of each side of GPS file and make it as center reference GPS value on each side
+def Find_Center_Point_GPS(robot_gps_dat):
+#####C1######## T ########C4######
+     #         C          #
+     #                    #
+#L   #C    ROBOT #       C# R
+     #                    #
+     #                    #
+     #         C          #
+#####C2####### B ########C3######
+	global left_limit_gps
+	global bottom_limit_gps
+	global right_limit_gps
+	global top_limit_gps
+
+	global gps_corner_1_lat
+	global gps_corner_1_long
+
+	global gps_corner_2_lat
+	global gps_corner_2_long
+
+	global gps_corner_3_lat
+	global gps_corner_3_long
+
+	global gps_corner_4_lat
+	global gps_corner_4_long
+
+
+  	left_limit_gps = ((gps_corner_1_lat + gps_corner_2_lat)/2,(gps_corner_1_long + gps_corner_2_long)/2)
+ 	bottom_limit_gps = ((gps_corner_2_lat + gps_corner_3_lat)/2,(gps_corner_2_long + gps_corner_3_long)/2)
+ 	right_limit_gps = ((gps_corner_3_lat + gps_corner_4_lat)/2,(gps_corner_3_long + gps_corner_4_long)/2)
+   	top_limit_gps = ((gps_corner_4_lat + gps_corner_1_lat)/2,(gps_corner_4_long + gps_corner_1_long)/2)
+
+
+#	rospy.loginfo("Printing limit")
+
+#	rospy.loginfo(left_limit_gps)
+#	rospy.loginfo(bottom_limit_gps)
+#	rospy.loginfo(right_limit_gps)
+#	rospy.loginfo(top_limit_gps)
+
+	#Do_Compare_Robot_Position(robot_gps_dat)
+        is_going_out(robot_gps_dat)
+
+
+def receive_gps_data(gps_msg):
+		global robot_gps_data
+		robot_gps_data = (gps_msg.latitude * gps_value_multi_factor,gps_msg.longitude * gps_value_multi_factor)
+
+		Find_Center_Point_GPS(robot_gps_data)
+#		print "Lat==",robot_gps_data.latitude
+#		print "Log==",robot_gps_data.longitude
+
+def publish_gps_corner():
+	#Publishing GPS corners
+	global gps_c1
+
+	global gps_c2
+
+	global gps_c3
+
+	global gps_c4
+
+	try:
+
+		gps_corner_1 = NavSatFix()
+		gps_corner_1.latitude = gps_corner_1_lat / gps_value_multi_factor
+		gps_corner_1.longitude = gps_corner_1_long / gps_value_multi_factor
+#		rospy.loginfo(gps_corner_1)
+		gps_c1.publish(gps_corner_1)
+
+
+		gps_corner_2 = NavSatFix()
+		gps_corner_2.latitude = gps_corner_2_lat / gps_value_multi_factor
+		gps_corner_2.longitude = gps_corner_2_long / gps_value_multi_factor
+#		rospy.loginfo(gps_corner_2)
+		gps_c2.publish(gps_corner_2)
+
+
+		gps_corner_3 = NavSatFix()
+		gps_corner_3.latitude = gps_corner_3_lat / gps_value_multi_factor
+		gps_corner_3.longitude = gps_corner_3_long / gps_value_multi_factor
+#		rospy.loginfo(gps_corner_3)
+		gps_c3.publish(gps_corner_3)
+
+
+		gps_corner_4 = NavSatFix()
+		gps_corner_4.latitude = gps_corner_4_lat / gps_value_multi_factor
+		gps_corner_4.longitude = gps_corner_4_long / gps_value_multi_factor
+#		rospy.loginfo(gps_corner_4)
+		gps_c4.publish(gps_corner_4)
+
+	except:
+		rospy.loginfo("Unable to update gps corners")
+		pass
+
+
+
+
+
+
+def Test_GPS():
+
+
+	rospy.init_node('Simple_test_run')
+
+	global gps_corner_1_lat
+	global gps_corner_1_long
+
+	global gps_corner_2_lat
+	global gps_corner_2_long
+
+	global gps_corner_3_lat
+	global gps_corner_3_long
+
+	global gps_corner_4_lat
+	global gps_corner_4_long
+
+	global robot_gps_data
+
+	global reach_one_side_limt
+
+	#Publishing GPS corners
+	global gps_c1
+
+	global gps_c2
+
+	global gps_c3
+
+	global gps_c4
+
+
+	rospy.Subscriber("/gps/fix",NavSatFix, receive_gps_data)
+
+	reach_one_side_limt = rospy.Publisher("/reached_one_side_limit",String, queue_size=1)
+
+	#Publisher for corner values
+	gps_c1 = rospy.Publisher("/gps_c1", NavSatFix, queue_size=1)
+	gps_c2 = rospy.Publisher("/gps_c2", NavSatFix, queue_size=1)
+	gps_c3 = rospy.Publisher("/gps_c3", NavSatFix, queue_size=1)
+	gps_c4 = rospy.Publisher("/gps_c4", NavSatFix, queue_size=1)
+
+
+
+	rospy.loginfo('Start listening robot GPS data')
+
+	rospy.spin()
+
+#	while not rospy.is_shutdown():
+
+
+
+
+if __name__ == '__main__':
+
+
+	Test_GPS()

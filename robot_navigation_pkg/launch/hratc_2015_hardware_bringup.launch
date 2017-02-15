@@ -1,0 +1,13 @@
+<launch>
+
+  <!-- Including Mine detection launch file first -->
+  <include file="$(find robot_navigation_pkg)/launch/hratc_2015_bringup.launch"/>
+
+
+
+  <!-- Starting the hardware nodes -->
+
+  <include file="$(find hratc2015_dataset)/launch/husky.launch"/> 
+
+</launch>
+

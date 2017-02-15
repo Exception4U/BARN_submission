@@ -1,0 +1,13 @@
+<launch>
+  <rosparam command="load" file="$(find mine_detector_pkg)/param/smooth_mine_param.yaml" />
+  <rosparam command="load" file="$(find mine_detector_pkg)/param/threshold_mine_sim.yaml" />
+  <rosparam command="load" file="$(find mine_detector_pkg)/param/sweep_arm.yaml" />
+
+  <node name="read_mine_detector" pkg="mine_detector_pkg" type="read_mine_detector.py" output="screen"/>
+
+  <node name="smooth_mine_detector_reading" pkg="mine_detector_pkg" type="smooth_mine_detector_reading.py" output="screen"/>
+
+  <node name="threshold_set_mine" pkg="mine_detector_pkg" type="threshold_set_mine.py" output="screen"/> 
+
+  <!--node name="sweep_arm" pkg="mine_detector_pkg" type="sweep_arm.py" output="screen"/-->
+</launch>

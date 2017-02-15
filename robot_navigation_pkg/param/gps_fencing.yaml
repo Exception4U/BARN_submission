@@ -1,0 +1,9 @@
+left_side_gps_threshold_lat: 0 #-30.060314832074897851
+left_side_gps_threshold_long: -5 #-51.173918920793525444
+bottom_side_gps_threshold_lat: -5  # -30.060314969251294315
+bottom_side_gps_threshold_long: 0  #-51.173815175327305838
+right_side_gps_threshold_lat: 0  #-30.060224724386614525
+right_side_gps_threshold_long: 5  #-51.173815017676766104
+top_side_gps_threshold_lat: 5 #-30.060224587210715441
+top_side_gps_threshold_long: 0  #-51.173918763048902747
+

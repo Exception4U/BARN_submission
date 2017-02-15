@@ -1,0 +1,32 @@
+<launch>
+
+
+
+<!-- Loading parameters for each nodes -->
+  <rosparam command="load" file="$(find robot_navigation_pkg)/param/gps_fencing.yaml" />
+  <rosparam command="load" file="$(find robot_navigation_pkg)/param/run_and_rotate.yaml" />
+  <rosparam command="load" file="$(find robot_navigation_pkg)/param/auto_navigation.yaml" />
+
+
+
+  <node name="gps_fencing" pkg="robot_navigation_pkg" type="gps_fencing.py" output="screen"/>
+
+  <node name="run_and_rotate" pkg="robot_navigation_pkg" type="run_and_rotate.py" output="screen"/>
+
+
+  <node name="find_robot_rotation" pkg="robot_navigation_pkg" type="find_robot_rotation.py" output="screen"/>
+
+
+  <node name="obstacle_avoidance" pkg="robot_navigation_pkg" type="obstacle_avoidance.py" output="screen"/>
+
+  <node name="robot_in_or_out" pkg="robot_navigation_pkg" type="robot_in_or_out.py" output="screen"/>
+
+  <node name="move_robot_inside_plot" pkg="robot_navigation_pkg" type="move_robot_inside_plot.py" output="screen"/>
+
+
+
+
+  <node name="auto_navigation" pkg="robot_navigation_pkg" type="auto_navigation.py" output="screen"/>  
+
+</launch>
+

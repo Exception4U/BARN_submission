@@ -1,0 +1,3 @@
+arm_lift_value: -0.12
+arm_time_step: 0.26
+arm_angle_step: 8
